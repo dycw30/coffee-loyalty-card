@@ -11,91 +11,91 @@
 
     <a href="/export_data" class="btn btn-success mb-3" target="_blank">Export Data</a>
 
-    <h4>Users</h4>
-    <form method="POST" action="/add_user" class="row g-2 mb-3">
-        <div class="col-md-3">
-            <input name="username" class="form-control" placeholder="Username" required>
-        </div>
-        <div class="col-md-3">
-            <input name="password" type="password" class="form-control" placeholder="Password" required>
-        </div>
-        <div class="col-md-2">
-            <select name="role" class="form-select">
-                <option value="admin">Admin</option>
-                <option value="barista">Barista</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Add User</button>
-        </div>
-    </form>
-    <ul class="list-group mb-4">
-        {% for user in users %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                {{ user.username }} ({{ user.role }})
-                <form method="POST" action="/delete_user" class="m-0">
-                    <input type="hidden" name="user_id" value="{{ user.id }}">
-                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
-
-    <h4>Customers</h4>
-    <form method="POST" action="/add_customer" class="row g-2 mb-3">
+    <div class="row">
         <div class="col-md-4">
-            <input name="name" class="form-control" placeholder="Customer Name" required>
-        </div>
-        <div class="col-md-2">
-            <input name="unique_id" class="form-control" placeholder="4-digit ID" maxlength="4" required>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Add Customer</button>
-        </div>
-    </form>
-    <ul class="list-group mb-4">
-        {% for customer in customers %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                {{ customer.name }} (ID: {{ customer.unique_id }}) - Orders: {{ customer.total_orders }} | Tokens: {{ customer.tokens_earned }} | Redeemed: {{ customer.tokens_redeemed }}
-                <form method="POST" action="/delete_customer" class="m-0">
-                    <input type="hidden" name="customer_id" value="{{ customer.id }}">
-                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
-
-    <form method="POST" action="/upload_customers" enctype="multipart/form-data" class="mb-4">
-        <div class="row g-2">
-            <div class="col-md-6">
-                <input type="file" name="file" class="form-control" accept=".xlsx" required>
+            <div class="card mb-3">
+                <div class="card-header">Add User</div>
+                <div class="card-body">
+                    <form method="POST" action="/add_user">
+                        <input class="form-control mb-2" name="username" placeholder="Username" required>
+                        <input class="form-control mb-2" name="password" type="password" placeholder="Password" required>
+                        <select class="form-control mb-2" name="role" required>
+                            <option value="admin">Admin</option>
+                            <option value="barista">Barista</option>
+                        </select>
+                        <button class="btn btn-primary" type="submit">Add User</button>
+                    </form>
+                </div>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-info">Upload Customers (.xlsx)</button>
+
+            <div class="card mb-3">
+                <div class="card-header">Add Drink</div>
+                <div class="card-body">
+                    <form method="POST" action="/add_drink">
+                        <input class="form-control mb-2" name="drink_name" placeholder="Drink name" required>
+                        <button class="btn btn-primary" type="submit">Add Drink</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">Upload Customers (.xlsx)</div>
+                <div class="card-body">
+                    <form method="POST" action="/upload_customers" enctype="multipart/form-data">
+                        <input type="file" name="file" class="form-control mb-2" accept=".xlsx" required>
+                        <button class="btn btn-secondary" type="submit">Upload</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </form>
 
-    <h4>Drinks</h4>
-    <form method="POST" action="/add_drink" class="row g-2 mb-3">
-        <div class="col-md-4">
-            <input name="drink_name" class="form-control" placeholder="Drink Name" required>
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-header">Users</div>
+                <ul class="list-group list-group-flush">
+                    {% for user in users %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ user.username }} ({{ user.role }})
+                            <form method="POST" action="/delete_user" class="d-inline">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">Drinks</div>
+                <ul class="list-group list-group-flush">
+                    {% for drink in drinks %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ drink.name }}
+                            <form method="POST" action="/delete_drink" class="d-inline">
+                                <input type="hidden" name="drink_id" value="{{ drink.id }}">
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">Customers</div>
+                <ul class="list-group list-group-flush">
+                    {% for customer in customers %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ customer.name }} (ID: {{ customer.unique_id }}) - Orders: {{ customer.total_orders }}
+                            <form method="POST" action="/delete_customer" class="d-inline">
+                                <input type="hidden" name="customer_id" value="{{ customer.id }}">
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Add Drink</button>
-        </div>
-    </form>
-    <ul class="list-group">
-        {% for drink in drinks %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                {{ drink.name }}
-                <form method="POST" action="/delete_drink" class="m-0">
-                    <input type="hidden" name="drink_id" value="{{ drink.id }}">
-                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+    </div>
 </div>
 </body>
 </html>
