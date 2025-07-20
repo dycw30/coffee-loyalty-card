@@ -1,0 +1,46 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  padding: 30px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.card h4 {
+  margin-bottom: 15px;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+}
+
+.btn {
+  border-radius: 8px;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: #0d6efd;
+  color: white;
+  border: 1px solid #dee2e6;
+  border-bottom-color: transparent;
+}
+
+input.form-control, select.form-select {
+  border-radius: 6px;
+}
+
+form {
+  margin-bottom: 1rem;
+}

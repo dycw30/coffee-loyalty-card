@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Barista Order Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <h2 class="mb-4">Barista Order Panel</h2>
+
+    <form id="lookupForm" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" id="uid" class="form-control" placeholder="Enter 4-digit UID" maxlength="4" required>
+        </div>
+        <div class="col-md-4">
+            <select id="customerSelect" class="form-select" required>
+                <option value="">Select Customer</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Lookup</button>
+        </div>
+    </form>
+
+    <div id="summaryCard" class="card p-3 mb-4 d-none">
+        <h5>Customer Summary</h5>
+        <p>Total Orders: <span id="totalOrders">-</span></p>
+        <p>Tokens Earned: <span id="tokensEarned">-</span></p>
+        <p>Tokens Redeemed: <span id="tokensRedeemed">-</span></p>
+        <p>Tokens Available: <span id="tokenBalance">-</span></p>
+    </div>
+
+    <form id="orderForm" method="post" action="/submit_order" class="row g-3 d-none">
+        <input type="hidden" name="customer_id" id="selectedCustomerId">
+        <div class="col-md-4">
+            <select name="drink" class="form-select" required>
+                <option value="">Select Drink</option>
+                {% for drink in drinks %}
+                    <option value="{{ drink.name }}">{{ drink.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="number" name="quantity" class="form-control" placeholder="Quantity" min="1" required>
+        </div>
+        <div class="col-md-3">
+            <input type="number" name="redeem" class="form-control" placeholder="Redeem Tokens (optional)" min="0">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success">Submit Order</button>
+        </div>
+    </form>
+
+    <div id="successMessage" class="alert alert-success mt-4 d-none">Order submitted successfully!</div>
+
+    <a href="/logout" class="btn btn-link mt-4">Logout</a>
+</div>
+
+<script>
+    $('#lookupForm').on('submit', function(e) {
+        e.preventDefault();
+        const uid = $('#uid').val();
+        $.post('/get_customers_by_uid', JSON.stringify({ uid: uid }), function(data) {
+            $('#customerSelect').empty().append('<option value="">Select Customer</option>');
+            data.forEach(function(c) {
+                $('#customerSelect').append(`<option value="${c.id}">${c.name}</option>`);
+            });
+        }, 'json');
+    });
+
+    $('#customerSelect').on('change', function() {
+        const customerId = $(this).val();
+        if (customerId) {
+            $.post('/get_customer_summary', JSON.stringify({ customer_id: customerId }), function(summary) {
+                $('#totalOrders').text(summary.total_orders);
+                $('#tokensEarned').text(summary.tokens_earned);
+                $('#tokensRedeemed').text(summary.tokens_redeemed);
+                $('#tokenBalance').text(summary.balance);
+                $('#selectedCustomerId').val(customerId);
+                $('#summaryCard, #orderForm').removeClass('d-none');
+            }, 'json');
+        }
+    });
+
+    $('#orderForm').on('submit', function() {
+        $('#successMessage').removeClass('d-none');
+        setTimeout(() => $('#successMessage').addClass('d-none'), 4000);
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
