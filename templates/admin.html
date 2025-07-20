@@ -7,26 +7,29 @@
 </head>
 <body class="bg-light">
 <div class="container py-4">
-    <h2 class="mb-4">Admin Panel</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Admin Panel</h2>
+        <a href="/logout" class="btn btn-outline-danger">Logout</a>
+    </div>
 
-    <!-- Export and Upload -->
-    <div class="mb-3 d-flex justify-content-between">
-        <form action="/export_data" method="GET">
-            <button type="submit" class="btn btn-success">Export to Excel</button>
-        </form>
-        <form action="/upload_customers" method="POST" enctype="multipart/form-data" class="d-flex">
-            <input type="file" name="file" accept=".xlsx" required class="form-control me-2">
-            <button type="submit" class="btn btn-primary">Upload Customers</button>
+    <div class="mb-4">
+        <form action="/upload_customers" method="post" enctype="multipart/form-data" class="d-flex gap-2">
+            <input type="file" name="file" accept=".xlsx" class="form-control" required>
+            <button type="submit" class="btn btn-primary">Upload Excel</button>
         </form>
     </div>
 
-    <!-- Users Section -->
+    <div class="mb-4">
+        <a href="/export_data" class="btn btn-success">Export Data</a>
+    </div>
+
+    <!-- Users -->
     <div class="card mb-4">
         <div class="card-header">Users</div>
         <div class="card-body">
-            <form action="/add_user" method="POST" class="row g-2 mb-3">
-                <div class="col"><input type="text" name="username" placeholder="Username" class="form-control" required></div>
-                <div class="col"><input type="password" name="password" placeholder="Password" class="form-control" required></div>
+            <form action="/add_user" method="post" class="row g-2 mb-3">
+                <div class="col"><input type="text" name="username" class="form-control" placeholder="Username" required></div>
+                <div class="col"><input type="password" name="password" class="form-control" placeholder="Password" required></div>
                 <div class="col">
                     <select name="role" class="form-select" required>
                         <option value="admin">Admin</option>
@@ -37,58 +40,58 @@
             </form>
             <ul class="list-group">
                 {% for user in users %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ user.username }} ({{ user.role }})
-                        <form action="/delete_user" method="POST" class="m-0">
-                            <input type="hidden" name="user_id" value="{{ user.id }}">
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-                    </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ user.username }} ({{ user.role }})
+                    <form action="/delete_user" method="post" class="m-0">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
 
-    <!-- Customers Section -->
+    <!-- Customers -->
     <div class="card mb-4">
         <div class="card-header">Customers</div>
         <div class="card-body">
-            <form action="/add_customer" method="POST" class="row g-2 mb-3">
-                <div class="col"><input type="text" name="name" placeholder="Name" class="form-control" required></div>
-                <div class="col"><input type="text" name="unique_id" placeholder="Unique ID" maxlength="4" class="form-control" required></div>
+            <form action="/add_customer" method="post" class="row g-2 mb-3">
+                <div class="col"><input type="text" name="name" class="form-control" placeholder="Customer Name" required></div>
+                <div class="col"><input type="text" name="unique_id" class="form-control" placeholder="4-digit ID" maxlength="4" required></div>
                 <div class="col-auto"><button type="submit" class="btn btn-primary">Add Customer</button></div>
             </form>
             <ul class="list-group">
                 {% for customer in customers %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ customer.name }} (ID: {{ customer.unique_id }})
-                        <form action="/delete_customer" method="POST" class="m-0">
-                            <input type="hidden" name="customer_id" value="{{ customer.id }}">
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-                    </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ customer.name }} ({{ customer.unique_id }})
+                    <form action="/delete_customer" method="post" class="m-0">
+                        <input type="hidden" name="customer_id" value="{{ customer.id }}">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
 
-    <!-- Drinks Section -->
-    <div class="card">
+    <!-- Drinks -->
+    <div class="card mb-4">
         <div class="card-header">Drinks</div>
         <div class="card-body">
-            <form action="/add_drink" method="POST" class="row g-2 mb-3">
-                <div class="col"><input type="text" name="drink_name" placeholder="Drink Name" class="form-control" required></div>
+            <form action="/add_drink" method="post" class="row g-2 mb-3">
+                <div class="col"><input type="text" name="drink_name" class="form-control" placeholder="Drink Name" required></div>
                 <div class="col-auto"><button type="submit" class="btn btn-primary">Add Drink</button></div>
             </form>
             <ul class="list-group">
                 {% for drink in drinks %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ drink.name }}
-                        <form action="/delete_drink" method="POST" class="m-0">
-                            <input type="hidden" name="drink_id" value="{{ drink.id }}">
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-                    </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ drink.name }}
+                    <form action="/delete_drink" method="post" class="m-0">
+                        <input type="hidden" name="drink_id" value="{{ drink.id }}">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </li>
                 {% endfor %}
             </ul>
         </div>
