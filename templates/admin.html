@@ -4,150 +4,98 @@
     <meta charset="UTF-8">
     <title>Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-light">
 <div class="container py-4">
     <h2 class="mb-4">Admin Panel</h2>
 
-    <ul class="nav nav-tabs mb-4" id="adminTabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#users">Users</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#customers">Customers</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#drinks">Drinks</a>
-        </li>
+    <a href="/export_data" class="btn btn-success mb-3" target="_blank">Export Data</a>
+
+    <h4>Users</h4>
+    <form method="POST" action="/add_user" class="row g-2 mb-3">
+        <div class="col-md-3">
+            <input name="username" class="form-control" placeholder="Username" required>
+        </div>
+        <div class="col-md-3">
+            <input name="password" type="password" class="form-control" placeholder="Password" required>
+        </div>
+        <div class="col-md-2">
+            <select name="role" class="form-select">
+                <option value="admin">Admin</option>
+                <option value="barista">Barista</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Add User</button>
+        </div>
+    </form>
+    <ul class="list-group mb-4">
+        {% for user in users %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ user.username }} ({{ user.role }})
+                <form method="POST" action="/delete_user" class="m-0">
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
     </ul>
 
-    <div class="tab-content">
-        <!-- Users Tab -->
-        <div class="tab-pane fade show active" id="users">
-            <h4>Manage Users</h4>
-            <form action="/add_user" method="post" class="row g-3 mb-3">
-                <div class="col-md-4">
-                    <input type="text" name="username" class="form-control" placeholder="Username" required>
-                </div>
-                <div class="col-md-4">
-                    <input type="password" name="password" class="form-control" placeholder="Password" required>
-                </div>
-                <div class="col-md-2">
-                    <select name="role" class="form-select" required>
-                        <option value="barista">Barista</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary">Add User</button>
-                </div>
-            </form>
-            <table class="table table-bordered">
-                <thead><tr><th>Username</th><th>Role</th><th>Action</th></tr></thead>
-                <tbody>
-                {% for user in users %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.role }}</td>
-                        <td>
-                            <form action="/delete_user" method="post" style="display:inline">
-                                <input type="hidden" name="user_id" value="{{ user.id }}">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+    <h4>Customers</h4>
+    <form method="POST" action="/add_customer" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <input name="name" class="form-control" placeholder="Customer Name" required>
         </div>
-
-        <!-- Customers Tab -->
-        <div class="tab-pane fade" id="customers">
-            <h4>Manage Customers</h4>
-            <form action="/add_customer" method="post" class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <input type="text" name="name" class="form-control" placeholder="Customer Name" required>
-                </div>
-                <div class="col-md-4">
-                    <input type="text" name="unique_id" class="form-control" placeholder="4-digit Unique ID" required>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary">Add Customer</button>
-                </div>
-            </form>
-
-            <form action="/upload_customers" method="post" enctype="multipart/form-data" class="mb-3">
-                <div class="row g-3">
-                    <div class="col-md-10">
-                        <input type="file" name="file" accept=".xlsx" class="form-control" required>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-secondary">Upload Excel</button>
-                    </div>
-                </div>
-            </form>
-
-            <form action="/export_data" method="get" class="mb-3">
-                <button type="submit" class="btn btn-success">Export All Data</button>
-            </form>
-
-            <table class="table table-bordered">
-                <thead><tr><th>Name</th><th>UID</th><th>Total Orders</th><th>Tokens Earned</th><th>Redeemed</th><th>Balance</th><th>Action</th></tr></thead>
-                <tbody>
-                {% for c in customers %}
-                    <tr>
-                        <td>{{ c.name }}</td>
-                        <td>{{ c.unique_id }}</td>
-                        <td>{{ c.total_orders }}</td>
-                        <td>{{ c.tokens_earned }}</td>
-                        <td>{{ c.tokens_redeemed }}</td>
-                        <td>{{ c.tokens_earned - c.tokens_redeemed }}</td>
-                        <td>
-                            <form action="/delete_customer" method="post" style="display:inline">
-                                <input type="hidden" name="customer_id" value="{{ c.id }}">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        <div class="col-md-2">
+            <input name="unique_id" class="form-control" placeholder="4-digit ID" maxlength="4" required>
         </div>
-
-        <!-- Drinks Tab -->
-        <div class="tab-pane fade" id="drinks">
-            <h4>Manage Drinks</h4>
-            <form action="/add_drink" method="post" class="row g-3 mb-3">
-                <div class="col-md-8">
-                    <input type="text" name="drink_name" class="form-control" placeholder="Drink Name" required>
-                </div>
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary">Add Drink</button>
-                </div>
-            </form>
-            <table class="table table-bordered">
-                <thead><tr><th>Drink Name</th><th>Action</th></tr></thead>
-                <tbody>
-                {% for d in drinks %}
-                    <tr>
-                        <td>{{ d.name }}</td>
-                        <td>
-                            <form action="/delete_drink" method="post" style="display:inline">
-                                <input type="hidden" name="drink_id" value="{{ d.id }}">
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Add Customer</button>
         </div>
-    </div>
+    </form>
+    <ul class="list-group mb-4">
+        {% for customer in customers %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ customer.name }} (ID: {{ customer.unique_id }}) - Orders: {{ customer.total_orders }} | Tokens: {{ customer.tokens_earned }} | Redeemed: {{ customer.tokens_redeemed }}
+                <form method="POST" action="/delete_customer" class="m-0">
+                    <input type="hidden" name="customer_id" value="{{ customer.id }}">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
 
-    <a href="/logout" class="btn btn-link mt-4">Logout</a>
+    <form method="POST" action="/upload_customers" enctype="multipart/form-data" class="mb-4">
+        <div class="row g-2">
+            <div class="col-md-6">
+                <input type="file" name="file" class="form-control" accept=".xlsx" required>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-info">Upload Customers (.xlsx)</button>
+            </div>
+        </div>
+    </form>
+
+    <h4>Drinks</h4>
+    <form method="POST" action="/add_drink" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <input name="drink_name" class="form-control" placeholder="Drink Name" required>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Add Drink</button>
+        </div>
+    </form>
+    <ul class="list-group">
+        {% for drink in drinks %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ drink.name }}
+                <form method="POST" action="/delete_drink" class="m-0">
+                    <input type="hidden" name="drink_id" value="{{ drink.id }}">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
